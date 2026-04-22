@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  driver
+  depot
+  admin
+}
+
+enum FuelStatus {
+  pending
+  confirmed
+}
+
+model User {
+  id       String @id @default(cuid())
+  name     String
+  phone    String @unique
+  role     Role
+  password String
+
+  fuelLogs FuelLog[]
+}
+
+model Vehicle {
+  id          String @id @default(cuid())
+  plateNumber String @unique
+  type        String
+}
+
+model Depot {
+  id       String @id @default(cuid())
+  name     String
+  location String
+}
+
+model FuelLog {
+  id              String @id @default(cuid())
+  vehicleId       String
+  driverId        String
+  depotId         String?
+  litersRequested Float
+  litersConfirmed Float?
+  photoUrl        String?
+  status          FuelStatus @default(pending)
+  createdAt       DateTime @default(now())
+}
